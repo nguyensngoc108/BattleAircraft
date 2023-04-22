@@ -24,9 +24,6 @@ import java.util.*;
 public class GameScreen implements Screen {
 
 
-    private SpriteBatch batch;
-    private OrthographicCamera camera;
-
     private Texture background;
     BattleShipMain game;
 
@@ -37,10 +34,6 @@ public class GameScreen implements Screen {
 
     public GameScreen(BattleShipMain game){
         this.game = game;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch = new SpriteBatch();
-
         background = new Texture("whitebg.jpg");
     }
     @Override
@@ -54,11 +47,19 @@ public class GameScreen implements Screen {
        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
         game.batch.draw(background, 0, 0, BattleShipMain.WIDTH, BattleShipMain.HEIGHT);
-       for (int x = 0; x <= 500; x += 50) {
-            for (int y = 0; y <= 500; y += 50){
-                game.batch.draw(new Texture("Cell1.png"), x, y);
+       for (int x = 0; x <= 450; x += 50) {
+            for (int y = 0; y <= 450; y += 50){
+                game.batch.draw(new Texture("Cell2.png"), x, y);
           }
        }
+
+        for (int x = 700; x <= 1150; x += 50) {
+            for (int y = 0; y <= 450; y += 50){
+                game.batch.draw(new Texture("Cell2.png"), x, y);
+            }
+        }
+
+
 
         game.batch.end();
         /*for (int x = 0; x < gridSize + 16; x++) {
@@ -81,7 +82,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, width, height);
     }
 
     @Override
