@@ -1,201 +1,108 @@
 package com.mygdx.battleship.Screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.GdxFileSystem;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.mygdx.battleship.BattleShipMain;
+import com.mygdx.battleship.Entities.Cell;
 import com.mygdx.battleship.Entities.Ship;
 import com.gdx.battleship.CellType;
 
-public class GameScreen implements InputProcessor {
-    private static final int BOARD_SIZE = 10;
-    private static final int CELL_SIZE = 32;
+import java.util.*;
+
+public class GameScreen implements Screen {
+
 
     private SpriteBatch batch;
-    private Texture boardTexture;
-    private Texture shipTexture;
-    private Texture hitTexture;
-    private Texture missTexture;
+    private OrthographicCamera camera;
 
-    private CellType[][] board = new CellType[BOARD_SIZE][BOARD_SIZE];
-    private boolean[][] boardChecked;
-    private List<Ship> ships;
-    private int numShipsSunk;
-    private int numShipsPlaced;
-    private boolean isGameOver;
+    private Texture background;
+    BattleShipMain game;
 
-    public GameScreen(SpriteBatch batch) {
-        this.batch = batch;
+    ArrayList<Cell> cell;
 
-        // Load textures
-        boardTexture = new Texture(Gdx.files.internal("board.png"));
-        shipTexture = new Texture(Gdx.files.internal("ship.png"));
-        hitTexture = new Texture(Gdx.files.internal("hit.png"));
-        missTexture = new Texture(Gdx.files.internal("miss.png"));
 
-        // Initialize board and ships
-        board = new int[BOARD_SIZE][BOARD_SIZE];
-        boardChecked = new boolean[BOARD_SIZE][BOARD_SIZE];
-        ships = new ArrayList<>();
-        numShipsSunk = 0;
-        numShipsPlaced = 0;
-        isGameOver = false;
 
-        // Initialize board with water cells
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                board[i][j] = CellType.WATER.ordinal();
-            }
-        }
+
+    public GameScreen(BattleShipMain game){
+        this.game = game;
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch = new SpriteBatch();
+
+        background = new Texture("whitebg.jpg");
+    }
+    @Override
+    public void show() {
+
     }
 
-    public void draw() {
-        batch.draw(boardTexture, 0, 0);
+    @Override
+    public void render(float delta) {
+       // Gdx.gl.glClearColor(1, 1, 1, 1);
+       // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.batch.begin();
+        game.batch.draw(background, 0, 0, BattleShipMain.WIDTH, BattleShipMain.HEIGHT);
+       for (int x = 0; x <= 500; x += 50) {
+            for (int y = 0; y <= 500; y += 50){
+                game.batch.draw(new Texture("Cell1.png"), x, y);
+          }
+       }
 
-        // Draw ships
-        for (Ship ship : ships) {
-            if (ship.isPlaced()) {
-                TextureRegion region = new TextureRegion(shipTexture);
-                region.flip(ship.isHorizontal(), false);
-                batch.draw(region, ship.getX() * CELL_SIZE, ship.getY() * CELL_SIZE);
+        game.batch.end();
+        /*for (int x = 0; x < gridSize + 16; x++) {
+            for (int y = 0; y < gridSize + 16; y++) {
+                batch.draw(playerCellTexture, x * cellSize, y * cellSize);
             }
         }
 
-        // Draw hits and misses
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (boardChecked[i][j]) {
-                    Texture texture;
-                    if (board[i][j] == CellType.SHIP) {
-                        texture = hitTexture;
-                    } else {
-                        texture = missTexture;
-                    }
-                    batch.draw(texture, i * CELL_SIZE, j * CELL_SIZE);
-                }
+        // Draw computer grid
+        for (int x = 90; x < gridSize; x++) {
+            for (int y = 90; y < gridSize; y++) {
+                float xPos = Gdx.graphics.getWidth() - (gridSize * cellSize) + (x * cellSize);
+                batch.draw(computerCellTexture, xPos, y * cellSize);
             }
-        }
+        }*/
+
+
     }
 
-    public void placeShip(int x, int y, boolean isHorizontal) {
-        Ship ship = new Ship(x, y, isHorizontal);
-        if (canPlaceShip(ship)) {
-            for (int i = 0; i < ship.getLength(); i++) {
-                int cellX = ship.getX() + (isHorizontal ? i : 0);
-                int cellY = ship.getY() + (isHorizontal ? 0 : i);
-                board[cellX][cellY] = CellType.SHIP;
-            }
-            ships.add(ship);
-            numShipsPlaced++;
-        }
+
+    @Override
+    public void resize(int width, int height) {
+        camera.setToOrtho(false, width, height);
     }
 
-    public boolean canPlaceShip(Ship ship) {
-        if (numShipsPlaced >= GameConstants.MAX_NUM_SHIPS) {
-            return false;
-        }
-        if (ship.getX() < 0 || ship.getX() >= BOARD_SIZE || ship.getY() < 0 || ship.getY() >= BOARD_SIZE) {
-            return false;
-        }
-        for (int i = 0; i < ship.getLength(); i++) {
-            int cellX = ship.getX() + (ship.isHorizontal() ? i : 0);
-            int cellY = ship.getY() + (ship.isHorizontal() ? 0 : i);
-            if (cellX < 0 || cellX >= BOARD_SIZE || cellY < 0 || cellY >= BOARD_SIZE) {
-                return false;
-            }
-            if (board[cellX][cellY] != CellType.WATER) {
-                return false;
-            }
-        }
-        return true;
+    @Override
+    public void pause() {
+
     }
 
-    public void checkCell(int x, int y) {
-        if (boardChecked[x][y]) {
-            return;
-        }
-        boardChecked[x][y] = true;
-        if (board[x][y] == CellType.SHIP) {
-            for (Ship ship : ships) {
-                if (ship.isHit(x, y)) {
-                    if (ship.isSunk()) {
-                        numShipsSunk++;
-                        if (numShipsSunk >= GameConstants.MAX_NUM_SHIPS) {
-                            isGameOver = true;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+    @Override
+    public void resume() {
+
     }
 
-    public boolean isGameOver() {
-        return isGameOver;
+    @Override
+    public void hide() {
+
     }
 
+    @Override
     public void dispose() {
-        boardTexture.dispose();
-        shipTexture.dispose();
-        hitTexture.dispose();
-        missTexture.dispose();
-    }
 
-    // InputProcessor interface methods
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (isGameOver) {
-            return false;
-        }
-        int cellX = screenX / CELL_SIZE;
-        int cellY = (SCREEN_HEIGHT - screenY) / CELL_SIZE;
-        if (boardChecked[cellX][cellY]) {
-            return false;
-        }
-        checkCell(cellX, cellY);
-        return true;
-    }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 }
+
