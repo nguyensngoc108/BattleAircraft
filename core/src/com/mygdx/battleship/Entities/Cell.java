@@ -48,4 +48,22 @@ public class Cell implements Entity{
     public float getY() {
         return y;
     }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+    public boolean checkInput(int xCor, int yCor) {
+
+            // Check if input is within cell bounds
+            if (xCor >= x && xCor <= x + width && yCor >= y && yCor <= y + height)
+                return true;
+            else
+                return false;
+
+    }
+
 }

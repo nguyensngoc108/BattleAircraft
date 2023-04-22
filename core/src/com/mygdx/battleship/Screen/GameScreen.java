@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
     private Texture background;
     BattleShipMain game;
 
-    ArrayList<Cell> cell;
+    ArrayList<Cell> Cells;
 
 
 
@@ -35,6 +35,7 @@ public class GameScreen implements Screen {
     public GameScreen(BattleShipMain game){
         this.game = game;
         background = new Texture("whitebg.jpg");
+        Cells = new ArrayList<Cell>();
     }
     @Override
     public void show() {
@@ -45,36 +46,42 @@ public class GameScreen implements Screen {
     public void render(float delta) {
        // Gdx.gl.glClearColor(1, 1, 1, 1);
        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.batch.begin();
-        game.batch.draw(background, 0, 0, BattleShipMain.WIDTH, BattleShipMain.HEIGHT);
+
+
+
+    // left panel
        for (int x = 0; x <= 450; x += 50) {
             for (int y = 0; y <= 450; y += 50){
-                game.batch.draw(new Texture("Cell2.png"), x, y);
+                Cells.add(new Cell(x,y,new Texture("Cell2.png"),50,50));
           }
        }
-
-        for (int x = 700; x <= 1150; x += 50) {
+       //right pannel
+       for (int x = 700; x <= 1150; x += 50) {
             for (int y = 0; y <= 450; y += 50){
-                game.batch.draw(new Texture("Cell2.png"), x, y);
+                Cells.add(new Cell(x,y,new Texture("Cell2.png"),50,50));
             }
         }
 
 
+        if (Gdx.input.justTouched()) { // Check if screen was touched
+            int touchX = Gdx.input.getX();
+            int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
+
+            // Loop through the list of cells and check if any cell was clicked
+            for (Cell cell : Cells) {
+                if(cell.checkInput(touchX,touchY) == true){
+                    Cells.remove(cell);
+                }
+            }
+        }
+        game.batch.begin();
+        game.batch.draw(background, 0, 0, BattleShipMain.WIDTH, BattleShipMain.HEIGHT);
+
+        for(Cell cell: Cells){
+            cell.render(game.batch);
+        }
 
         game.batch.end();
-        /*for (int x = 0; x < gridSize + 16; x++) {
-            for (int y = 0; y < gridSize + 16; y++) {
-                batch.draw(playerCellTexture, x * cellSize, y * cellSize);
-            }
-        }
-
-        // Draw computer grid
-        for (int x = 90; x < gridSize; x++) {
-            for (int y = 90; y < gridSize; y++) {
-                float xPos = Gdx.graphics.getWidth() - (gridSize * cellSize) + (x * cellSize);
-                batch.draw(computerCellTexture, xPos, y * cellSize);
-            }
-        }*/
 
 
     }
