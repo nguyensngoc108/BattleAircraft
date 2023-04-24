@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.battleship.Tool.React;
+import org.w3c.dom.Text;
 
 public class Cell implements Entity{
 
@@ -66,4 +67,10 @@ public class Cell implements Entity{
 
     }
 
+    public void setTexture(Texture texture){
+        this.texture = texture;
+    }
+    public Texture getTexture(){
+        return this.texture;
+    }
 }
