@@ -12,7 +12,7 @@ public class Cell implements Entity{
 
     public int height;
     public int width;
-
+    public boolean isShip = false;
     public float x, y;
     public Texture texture;
 
@@ -72,5 +72,8 @@ public class Cell implements Entity{
     }
     public Texture getTexture(){
         return this.texture;
+    }
+    public void setIsShip(boolean boo){
+        this.isShip = boo;
     }
 }
