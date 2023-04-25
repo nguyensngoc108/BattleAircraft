@@ -119,30 +119,31 @@ public class GameScreen implements Screen {
                 if(touchX <= Gdx.graphics.getWidth() /2 - 100){
                     for (Cell cell : cells) {
                         if (cell.checkInput(touchX, touchY)) {
-                            //cell.setIsShip(true); // Set isShip to true for the clicked cell
+                            if (!cell.isShip() && canPlaceShip(cell.getX(), cell.getY(), shipIsHor)) {
+                                //cell.setIsShip(true); // Set isShip to true for the clicked cell
+                                float cellX = cell.getX();
+                                float cellY = cell.getY();
 
-                            float cellX = cell.getX();
-                            float cellY = cell.getY();
-
-                            // Set isShip to true for adjacent cells
-                            for (Cell adjacentCell : cells) {
-                                float adjacentCellX = adjacentCell.getX();
-                                float adjacentCellY = adjacentCell.getY();
-                                if (shipIsHor) {
-                                    if(adjacentCellX >= cellX && adjacentCellX <= cellX + 200 && adjacentCellY >= cellY && adjacentCellY <= cellY+ cell.getHeight()){
-                                        adjacentCell.setIsShip(true);
-                                    }
-                                }else{
-                                    if(adjacentCellX >= cellX && adjacentCellX <= cellX + cell.getWidth() && adjacentCellY >= cellY && adjacentCellY <= cellY+ 200) {
-                                        adjacentCell.setIsShip(true);
+                                // Set isShip to true for adjacent cells
+                                for (Cell adjacentCell : cells) {
+                                    float adjacentCellX = adjacentCell.getX();
+                                    float adjacentCellY = adjacentCell.getY();
+                                    if (shipIsHor) {
+                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + 200 && adjacentCellY >= cellY && adjacentCellY <= cellY + cell.getHeight()) {
+                                            adjacentCell.setIsShip(true);
+                                        }
+                                    } else {
+                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + cell.getWidth() && adjacentCellY >= cellY && adjacentCellY <= cellY + 200) {
+                                            adjacentCell.setIsShip(true);
+                                        }
                                     }
                                 }
-                            }
-
-                            ships.add(new Ship(cell.getX(),cell.getY(),shipIsHor));
-                            numShip++;
-                            if(numShip == 4){
-                                isPlacingShip = false;
+                                //add ships
+                                ships.add(new Ship(cell.getX(), cell.getY(), shipIsHor));
+                                numShip++;
+                                if (numShip == 4) {
+                                    isPlacingShip = false;
+                                }
                             }
                         }
                     }
@@ -185,6 +186,29 @@ public class GameScreen implements Screen {
         game.batch.end();
     }
 
+    private boolean canPlaceShip(float x, float y, boolean isHorizontal) {
+
+        if (isHorizontal) {
+            if(x + 200> Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
+                return false;
+            }
+            for (Cell cell : cells) {
+                if (cell.isShip() && cell.getX() >= x - 200 && cell.getX() <= x + 200 && cell.getY() == y) {
+                    return false;
+                }
+            }
+        } else {
+            if(y+200 > Gdx.graphics.getHeight()){ // check if ship out of panel
+                return false;
+            }
+            for (Cell cell : cells) {
+                if (cell.isShip() && cell.getX() == x && cell.getY() >= y - 200 && cell.getY() <= y + 200) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     @Override
     public void resize(int width, int height) {
 

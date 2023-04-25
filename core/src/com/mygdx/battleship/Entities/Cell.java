@@ -66,7 +66,9 @@ public class Cell implements Entity{
                 return false;
 
     }
-
+    public boolean isShip(){
+        return isShip;
+    }
     public void setTexture(Texture texture){
         this.texture = texture;
     }
