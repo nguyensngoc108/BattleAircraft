@@ -114,6 +114,7 @@ public class GameScreen implements Screen {
             //placing ships
             if (Gdx.input.justTouched()) {
                 int touchX = Gdx.input.getX();
+                //int touchY = Gdx.input.getY();
                 int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
 
                 if(touchX <= Gdx.graphics.getWidth() /2 - 100){
@@ -128,12 +129,12 @@ public class GameScreen implements Screen {
                                 for (Cell adjacentCell : cells) {
                                     float adjacentCellX = adjacentCell.getX();
                                     float adjacentCellY = adjacentCell.getY();
-                                    if (shipIsHor) {
-                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + 200 && adjacentCellY >= cellY && adjacentCellY <= cellY + cell.getHeight()) {
+                                    if(shipIsHor){
+                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + 150 && adjacentCellY == cellY ) {
                                             adjacentCell.setIsShip(true);
                                         }
-                                    } else {
-                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + cell.getWidth() && adjacentCellY >= cellY && adjacentCellY <= cellY + 200) {
+                                    }else{
+                                        if (adjacentCellX == cellX && adjacentCellY >= cellY && adjacentCellY <= cellY + 150) {
                                             adjacentCell.setIsShip(true);
                                         }
                                     }
@@ -189,20 +190,20 @@ public class GameScreen implements Screen {
     private boolean canPlaceShip(float x, float y, boolean isHorizontal) {
 
         if (isHorizontal) {
-            if(x + 200> Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
+            if(x + 200 > Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
                 return false;
             }
             for (Cell cell : cells) {
-                if (cell.isShip() && cell.getX() >= x - 200 && cell.getX() <= x + 200 && cell.getY() == y) {
+                if(cell.getX()== x + 150 && cell.getY() == y && cell.isShip==true){//check if the ship will be overlapped
                     return false;
                 }
             }
         } else {
-            if(y+200 > Gdx.graphics.getHeight()){ // check if ship out of panel
+            if(y + 200 > Gdx.graphics.getHeight()){ // check if ship out of panel
                 return false;
             }
             for (Cell cell : cells) {
-                if (cell.isShip() && cell.getX() == x && cell.getY() >= y - 200 && cell.getY() <= y + 200) {
+                if (cell.getY() == y + 150  && cell.getX() == x && cell.isShip==true) {//check if the ship will be overlapped //&& cell.getY() + 100 >= y
                     return false;
                 }
             }

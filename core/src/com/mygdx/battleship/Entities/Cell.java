@@ -58,14 +58,13 @@ public class Cell implements Entity{
         return width;
     }
     public boolean checkInput(int xCor, int yCor) {
-
-            // Check if input is within cell bounds
-            if (xCor >= x && xCor <= x + width && yCor >= y && yCor <= y + height)
-                return true;
-            else
-                return false;
-
+        // Check if input is within cell bounds
+        if (xCor >= x && xCor <= x + width && yCor >= y && yCor <= y + height)
+            return true;
+        else
+            return false;
     }
+
     public boolean isShip(){
         return isShip;
     }

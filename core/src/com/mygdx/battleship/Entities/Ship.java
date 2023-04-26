@@ -31,6 +31,7 @@ public class Ship implements Entity {
             batch.draw(texture, x, y,50,200);
     }
 
+
     @Override
     public float getX() {
         return x;
