@@ -14,9 +14,11 @@ public class BattleShipMain extends Game {
 	public SpriteBatch batch;
 
 
-	
+
 	@Override
 	public void create () {
+		//Add music background
+
 		batch = new SpriteBatch();
 		this.setScreen(new GameScreen(this));
 	}
@@ -28,6 +30,8 @@ public class BattleShipMain extends Game {
 	
 	@Override
 	public void dispose () {
+		batch.dispose();
+
 
 	}
 }

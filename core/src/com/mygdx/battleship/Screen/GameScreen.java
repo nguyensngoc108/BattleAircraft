@@ -102,6 +102,10 @@ public class GameScreen implements Screen {
                 return false;
             }
         });
+
+        //Create an AI player
+
+
     }
 
 
@@ -167,6 +171,12 @@ public class GameScreen implements Screen {
                 }
             }
         }
+
+       //check if cells is already be placed
+        for(Cell cell : removeCells){
+            cells.remove(cell);
+        }
+
 
 
 
