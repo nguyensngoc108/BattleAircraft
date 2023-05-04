@@ -4,23 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.battleship.BattleShipMain;
 import com.mygdx.battleship.Entities.Cell;
 import com.mygdx.battleship.Entities.Ship;
+import com.mygdx.battleship.Utils.AIplayer;
 
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
+    GameScreen gameScreen;
     private boolean isPlacingShip = true;
     private boolean shipIsHor = true;
     private int numShip=0;
@@ -117,6 +112,7 @@ public class GameScreen implements Screen {
                 //int touchY = Gdx.input.getY();
                 int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
 
+
                 if(touchX <= Gdx.graphics.getWidth() /2 - 100){
                     for (Cell cell : cells) {
                         if (cell.checkInput(touchX, touchY)) {
@@ -136,21 +132,23 @@ public class GameScreen implements Screen {
                                     }else{
                                         if (adjacentCellX == cellX && adjacentCellY >= cellY && adjacentCellY <= cellY + 150) {
                                             adjacentCell.setIsShip(true);
+
                                         }
                                     }
                                 }
                                 //add ships
-                                ships.add(new Ship(cell.getX(), cell.getY(), shipIsHor));
+                                ships.add(new Ship(cell.getX(), cell.getY(), shipIsHor,50));
                                 numShip++;
                                 if (numShip == 4) {
                                     isPlacingShip = false;
+
                                 }
                             }
                         }
                     }
                 }
             }
-
+        
         }else {
             // Select cells
             if (Gdx.input.justTouched()) { // Check if screen was touched
@@ -186,6 +184,8 @@ public class GameScreen implements Screen {
         }
         game.batch.end();
     }
+
+
 
     private boolean canPlaceShip(float x, float y, boolean isHorizontal) {
 
@@ -238,4 +238,10 @@ public class GameScreen implements Screen {
             cell.getTexture().dispose();
         }
     }
+
+
+
+
+
+
 }
