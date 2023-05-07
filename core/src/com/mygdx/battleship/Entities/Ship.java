@@ -19,11 +19,24 @@ public class Ship implements Entity {
     public Ship(float x, float y, boolean isHorizontal, int size) {
         this.x = x;
         this.y = y;
-        this.length = 200;
+        this.length=1;
         this.texture = new Texture("badlogic.jpg");
         this.isHorizontal = isHorizontal;
         this.isAlive = true;
-        this.size = 3;
+        switch (size) {
+            case 0:
+                length = 2;
+                break;
+            case 1:
+                length = 3;
+                break;
+            case 2:
+                length = 3;
+                break;
+            case 3:
+                length = 4;
+                break;
+        }
 
     }
 
@@ -34,9 +47,9 @@ public class Ship implements Entity {
 
     public void render(SpriteBatch batch) {
         if(isHorizontal)
-            batch.draw(texture, x, y,200,50);
+            batch.draw(texture, x, y,50*length,50);
         else
-            batch.draw(texture, x, y,50,200);
+            batch.draw(texture, x, y,50,50*length);
     }
 
 

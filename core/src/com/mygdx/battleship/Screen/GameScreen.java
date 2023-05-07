@@ -18,12 +18,15 @@ public class GameScreen implements Screen {
     GameScreen gameScreen;
     private boolean isPlacingShip = true;
     private boolean shipIsHor = true;
+    private boolean isPlayerTurn = true;
     private int numShip=0;
     private Texture background;
     private BattleShipMain game;
     private ArrayList<Ship> ships;
     private ArrayList<Cell> cells;
     private ArrayList<Cell> removeCells;
+    private AIplayer aIplayer;
+    private ArrayList<Ship> aIShips;
 
     public GameScreen(BattleShipMain game) {
         this.game = game;
@@ -31,6 +34,8 @@ public class GameScreen implements Screen {
         cells = new ArrayList<Cell>();
         removeCells = new ArrayList<Cell>();
         ships = new ArrayList<Ship>();
+
+
 
         // Create cells in the left panel
         for (int x = 0; x <= Gdx.graphics.getWidth()/2 - 150; x += 50) {
@@ -46,12 +51,15 @@ public class GameScreen implements Screen {
             }
         }
 
+        aIplayer = new AIplayer(this.cells);
 
 
     }
 
     @Override
     public void show() {
+        aIplayer.placeShip();
+        aIShips = aIplayer.getAIShip();
         Gdx.input.setInputProcessor(new InputProcessor() {
             @Override
             public boolean keyDown(int keycode) {
@@ -105,19 +113,26 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //Placing ship session
         if(isPlacingShip) {
             //placing ships
             if (Gdx.input.justTouched()) {
                 int touchX = Gdx.input.getX();
-                //int touchY = Gdx.input.getY();
                 int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
 
-
-                if(touchX <= Gdx.graphics.getWidth() /2 - 100){
+                if(touchX <= Gdx.graphics.getWidth() /2 - 100){ //check coordinate for left panel
                     for (Cell cell : cells) {
                         if (cell.checkInput(touchX, touchY)) {
-                            if (!cell.isShip() && canPlaceShip(cell.getX(), cell.getY(), shipIsHor)) {
-                                //cell.setIsShip(true); // Set isShip to true for the clicked cell
+                            Ship tempShip =new Ship(cell.getX(), cell.getY(), shipIsHor,numShip);
+                            if ( canPlaceShip(cell.getX(), cell.getY(), shipIsHor,tempShip.getLength())) { //check whether can place ship or not
+                                //add ships
+                                ships.add(tempShip);
+                                numShip++;
+                                if (numShip == 4) {
+                                    isPlacingShip = false; //placing ship session end
+                                }
+                               // Set isShip to true for the clicked cell
+                                int shipLength = tempShip.getLength();
                                 float cellX = cell.getX();
                                 float cellY = cell.getY();
 
@@ -126,23 +141,17 @@ public class GameScreen implements Screen {
                                     float adjacentCellX = adjacentCell.getX();
                                     float adjacentCellY = adjacentCell.getY();
                                     if(shipIsHor){
-                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + 150 && adjacentCellY == cellY ) {
+                                        if (adjacentCellX >= cellX && adjacentCellX <= cellX + 50*(shipLength-1) && adjacentCellY == cellY ) {
                                             adjacentCell.setIsShip(true);
                                         }
                                     }else{
-                                        if (adjacentCellX == cellX && adjacentCellY >= cellY && adjacentCellY <= cellY + 150) {
+                                        if (adjacentCellX == cellX && adjacentCellY >= cellY && adjacentCellY <= cellY + 50*(shipLength-1)) {
                                             adjacentCell.setIsShip(true);
 
                                         }
                                     }
                                 }
-                                //add ships
-                                ships.add(new Ship(cell.getX(), cell.getY(), shipIsHor,50));
-                                numShip++;
-                                if (numShip == 4) {
-                                    isPlacingShip = false;
 
-                                }
                             }
                         }
                     }
@@ -151,22 +160,30 @@ public class GameScreen implements Screen {
         
         }else {
             // Select cells
-            if (Gdx.input.justTouched()) { // Check if screen was touched
-                int touchX = Gdx.input.getX();
-                int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
+            if(isPlayerTurn) {
+                if (Gdx.input.justTouched()) { // Check if screen was touched
+                    int touchX = Gdx.input.getX();
+                    int touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y-axis
 
-                if (touchX >= Gdx.graphics.getWidth() / 2 + 100) {
-
-                    // Loop through the list of cells and check if any cell was clicked
-                    for (Cell cell : cells) {
-                        if (cell.checkInput(touchX, touchY)) { // No need to compare with true
-                            removeCells.add(cell);
-                            cell.setTexture(new Texture("CellBlack.jpg"));
+                    if (touchX >= Gdx.graphics.getWidth() / 2 + 100) { //check coordinate for right panel
+                        // Loop through the list of cells and check if any cell was clicked
+                        for (Cell cell : cells) {
+                            if (cell.checkInput(touchX, touchY)) {
+                                removeCells.add(cell);
+                                if(cell.isShip) //if cell that isShip is clicked
+                                    cell.setTexture(new Texture("redCell.png"));
+                                else
+                                    isPlayerTurn = false;
+                                    cell.setTexture(new Texture("CellBlack.jpg"));
+                            }
                         }
                     }
                 }
+            }else{
+                aIplayer.selectCell();
             }
         }
+
 
 
 
@@ -182,29 +199,37 @@ public class GameScreen implements Screen {
         for(Ship ship : ships){
             ship.render(game.batch);
         }
+
+//        for(Ship ship : aIShips){
+//            ship.render(game.batch);
+//        }
         game.batch.end();
     }
 
 
 
-    private boolean canPlaceShip(float x, float y, boolean isHorizontal) {
+    private boolean canPlaceShip(float x, float y, boolean isHorizontal, int shipLength) {
 
         if (isHorizontal) {
-            if(x + 200 > Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
+            if(x + 50*shipLength > Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
                 return false;
             }
             for (Cell cell : cells) {
-                if(cell.getX()== x + 150 && cell.getY() == y && cell.isShip==true){//check if the ship will be overlapped
-                    return false;
+                for (int i = 0; i <= 50*(shipLength-1); i += 50) {
+                    if (cell.getX() == x + i && cell.getY() == y && cell.isShip) {//check if the ship will be overlapped
+                        return false;
+                    }
                 }
             }
         } else {
-            if(y + 200 > Gdx.graphics.getHeight()){ // check if ship out of panel
+            if(y + 50*shipLength > Gdx.graphics.getHeight()){ // check if ship out of panel
                 return false;
             }
             for (Cell cell : cells) {
-                if (cell.getY() == y + 150  && cell.getX() == x && cell.isShip==true) {//check if the ship will be overlapped //&& cell.getY() + 100 >= y
-                    return false;
+                for (int i = 0; i <= 50*(shipLength-1); i += 50) {
+                    if (cell.getY() == y + i && cell.getX() == x && cell.isShip) {
+                        return false;
+                    }
                 }
             }
         }
