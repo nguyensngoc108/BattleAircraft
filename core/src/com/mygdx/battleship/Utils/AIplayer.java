@@ -75,8 +75,24 @@ public class AIplayer {
         }
     }
 
-    public void selectCell(){
+    public boolean selectCell(boolean isPlayerTurn){
+        int touchX = MathUtils.random(0,Gdx.graphics.getWidth() / 2 - 100);
+        // int touchY = MathUtils.random(0, Gdx.graphics.getHeight());
+        int touchY = Gdx.graphics.getHeight() - MathUtils.random(Gdx.graphics.getHeight());
 
+        for (Cell cell : cells) {
+            if (cell.checkInput(touchX, touchY)) {
+                //removeCells.add(cell);
+                if (cell.isShip) //if cell that isShip is clicked
+                    cell.setTexture(new Texture("redCell.png"));
+                else {
+                    isPlayerTurn = true;
+                    cell.setTexture(new Texture("CellBlack.jpg"));
+
+                }
+            }
+        }
+        return isPlayerTurn;
     }
 //    public Ship getRandomShip(ArrayList<Cell> cells) {
 //        Random random = new Random();
@@ -129,7 +145,6 @@ public class AIplayer {
 
 
     private boolean canPlaceShip(float x, float y, boolean isHorizontal, int shipLength) {
-
         if (isHorizontal) {
             if(x + 50*shipLength > Gdx.graphics.getWidth()/2 - 100 ){ //check if ship will be out of panel
                 return false;

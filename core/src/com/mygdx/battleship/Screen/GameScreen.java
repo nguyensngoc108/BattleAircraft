@@ -180,7 +180,7 @@ public class GameScreen implements Screen {
                     }
                 }
             }else{
-                aIplayer.selectCell();
+                aIplayer.selectCell(isPlayerTurn);
             }
         }
 
