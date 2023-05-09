@@ -19,9 +19,12 @@ public class AIplayer {
     private  ArrayList<Cell> cells;
     private  ArrayList<Cell> removeCells;
     private  ArrayList<Ship> aIShips;
+
+
     public int numShip =0;
 
-
+    //create an array to store the cells in each ships
+    private int checkShip[] = {0,0,0,0};
 
     public  AIplayer(ArrayList<Cell> cells) {
         this.cells = cells;
@@ -76,6 +79,7 @@ public class AIplayer {
     }
 
     public boolean selectCell(boolean isPlayerTurn){
+
         int touchX = MathUtils.random(0,Gdx.graphics.getWidth() / 2 - 100);
         // int touchY = MathUtils.random(0, Gdx.graphics.getHeight());
         int touchY = Gdx.graphics.getHeight() - MathUtils.random(Gdx.graphics.getHeight());
@@ -83,64 +87,27 @@ public class AIplayer {
         for (Cell cell : cells) {
             if (cell.checkInput(touchX, touchY)) {
                 //removeCells.add(cell);
-                if (cell.isShip) //if cell that isShip is clicked
+                if (cell.isShip) { //if cell that isShip is clicked
                     cell.setTexture(new Texture("redCell.png"));
-                else {
+
+                    for (int i = 0; i < 4; i++) {
+                        if (cell.getShipNum()[i] == true) {
+                            checkShip[i]++;
+                            break;
+                        }
+                    }
+
+                }else {
                     isPlayerTurn = true;
                     cell.setTexture(new Texture("CellBlack.jpg"));
+
 
                 }
             }
         }
         return isPlayerTurn;
     }
-//    public Ship getRandomShip(ArrayList<Cell> cells) {
-//        Random random = new Random();
-//        int length = 0;
-//        switch (random.nextInt(4)) {
-//            case 0:
-//                length = 2;
-//                break;
-//            case 1:
-//                length = 3;
-//                break;
-//            case 2:
-//                length = 3;
-//                break;
-//            case 3:
-//                length = 4;
-//                break;
-//        }
-//        ArrayList<Cell> occupiedCells = new ArrayList<Cell>();
-//        boolean isHor = random.nextBoolean();
-//        int startX, startY;
-//        if (isHor) {
-//            startX = random.nextInt(10 - length);
-//            startY = random.nextInt(10);
-//        } else {
-//            startX = random.nextInt(10);
-//            startY = random.nextInt(10 - length);
-//        }
-//        for (int i = 0; i < length; i++) {
-//            int x = isHor ? startX + i : startX;
-//            int y = isHor ? startY : startY + i;
-//            Cell cell = getCell(cells, x, y);
-//            if (cell == null || cell.isShip()) {
-//                return getRandomShip(cells); // Try again if any cell is already occupied
-//            }
-//            occupiedCells.add(cell);
-//        }
-//        return new Ship(startX * 50, startY * 50, isHor, length * 50);
-//    }
-//
-//    private Cell getCell(ArrayList<Cell> cells, int x, int y) {
-//        for (Cell cell : cells) {
-//            if (cell.getX() == x * 50 && cell.getY() == y * 50) {
-//                return cell;
-//            }
-//        }
-//        return null;
-//    }
+
 
 
 

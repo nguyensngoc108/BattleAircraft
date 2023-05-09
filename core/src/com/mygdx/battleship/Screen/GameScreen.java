@@ -143,10 +143,13 @@ public class GameScreen implements Screen {
                                     if(shipIsHor){
                                         if (adjacentCellX >= cellX && adjacentCellX <= cellX + 50*(shipLength-1) && adjacentCellY == cellY ) {
                                             adjacentCell.setIsShip(true);
+                                            adjacentCell.setShipNum(numShip-1);
+
                                         }
                                     }else{
                                         if (adjacentCellX == cellX && adjacentCellY >= cellY && adjacentCellY <= cellY + 50*(shipLength-1)) {
                                             adjacentCell.setIsShip(true);
+                                            adjacentCell.setShipNum(numShip-1);
 
                                         }
                                     }
@@ -196,9 +199,9 @@ public class GameScreen implements Screen {
             cell.render(game.batch);
         }
     //render ships
-        for(Ship ship : ships){
-            ship.render(game.batch);
-        }
+//        for(Ship ship : ships){
+//            ship.render(game.batch);
+//        }
 
 //        for(Ship ship : aIShips){
 //            ship.render(game.batch);
