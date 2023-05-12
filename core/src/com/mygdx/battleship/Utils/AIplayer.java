@@ -8,18 +8,23 @@ import com.mygdx.battleship.Entities.Cell;
 import com.mygdx.battleship.Entities.Ship;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
-
 import static com.badlogic.gdx.math.MathUtils.random;
+enum Direction {L,R,U,D};
 
 //create an AI that will automaticlly place ships
 public class AIplayer {
-
-
+    private int currentX;
+    private int currentY;
+    private int times = 1;
+    public Direction dir = Direction.R;
     private  ArrayList<Cell> cells;
     private  ArrayList<Cell> removeCells;
     private  ArrayList<Ship> aIShips;
 
+    private List<List<Integer>> selectCell = new ArrayList<List<Integer>>(); //list of coordinate of cell to select
 
     public int numShip =0;
 
@@ -29,6 +34,16 @@ public class AIplayer {
     public  AIplayer(ArrayList<Cell> cells) {
         this.cells = cells;
         aIShips = new ArrayList<Ship>();
+
+        //construct selectCell
+        for (int i = 1; i <= 451; i+=50) {
+            for (int j = 1; j <= 451; j+=50) {
+                List<Integer> innerList = new ArrayList<Integer>();
+                innerList.add(i);
+                innerList.add(j);
+                selectCell.add(innerList);
+            }
+        }
     }
 
     public void placeShip(){
@@ -71,43 +86,169 @@ public class AIplayer {
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
     }
 
-    public boolean selectCell(boolean isPlayerTurn){
+    public boolean selectCell(boolean isPlayerTurn, boolean isNew){
 
-        int touchX = MathUtils.random(0,Gdx.graphics.getWidth() / 2 - 100);
-        // int touchY = MathUtils.random(0, Gdx.graphics.getHeight());
-        int touchY = Gdx.graphics.getHeight() - MathUtils.random(Gdx.graphics.getHeight());
+        if(isNew){
+            int ran = random.nextInt(4,8);//selectCell.size()
+            int touchX = selectCell.get(ran).get(0);
+            int touchY = selectCell.get(ran).get(1);
+            currentX = touchX;
+            currentY = touchY;
+            deleteSelectedCell(touchX, touchY); //delete the selected cell out of selectCell list
+
+            for (Cell cell : cells) {
+                if (cell.checkInput(touchX, touchY)) {
+                    //removeCells.add(cell);
+                    if (cell.isShip) { //if cell that isShip is clicked
+                        cell.setTexture(new Texture("redCell.png"));
+                        isNew = false;
+                        for (int i = 0; i < 4; i++) {
+                            if (cell.getShipNum()[i] == true) {
+                                checkShip[i]++;
+                                break;
+                            }
+                        }
+                        aIAlgorithm(isNew);
+                    }else{
+                        isPlayerTurn = true;
+                        cell.setTexture(new Texture("CellBlack.jpg"));
+                    }
+                    break;
+                }
+            }
+            return isPlayerTurn;
+        }else {
+            boolean temp = aIAlgorithm(isNew);
+            return temp;
+        }
+    }
+    public boolean aIAlgorithm(boolean isNew) {
+
+        int tempX = currentX;
+        int tempY = currentY;
+        checkSwitchDir();
+        switch (dir){
+            case R: {
+                tempX = currentX + 50 * times;
+                tempY = currentY;
+                break;
+            }
+            case L:{
+                tempX = currentX - 50 * times;
+                tempY = currentY;
+                break;
+            }
+            case U:{
+                tempX = currentX ;
+                tempY = currentY + 50 * times;
+                break;
+            }
+            case D:{
+                tempX = currentX ;
+                tempY = currentY - 50 * times;
+                break;
+            }
+
+        }
+
 
         for (Cell cell : cells) {
-            if (cell.checkInput(touchX, touchY)) {
-                //removeCells.add(cell);
-                if (cell.isShip) { //if cell that isShip is clicked
+            if (cell.checkInput(tempX, tempY)) {
+                if (cell.isShip) {
                     cell.setTexture(new Texture("redCell.png"));
-
                     for (int i = 0; i < 4; i++) {
-                        if (cell.getShipNum()[i] == true) {
+                        if (cell.getShipNum()[i]) {
                             checkShip[i]++;
+                            int totalShipCell = 0;
+                            this.times++;
+                            for (int j = 0; j < 4; j++) {
+                                totalShipCell += checkShip[j];
+                            }
+                            if (totalShipCell == 12) {
+                                // end
+                            }
+                            if (i == 0 && checkShip[i] == 2) {
+                                isNew = true;
+                                this.dir = Direction.R;
+                            } else if (i == 1 && checkShip[i] == 3) {
+                                isNew = true;
+                                this.dir = Direction.R;
+                            } else if (i == 2 && checkShip[i] == 3) {
+                                isNew = true;
+                                this.dir = Direction.R;
+                            } else if (i == 3 && checkShip[i] == 4) {
+                                isNew = true;
+                                this.dir = Direction.R;
+                            }
                             break;
                         }
                     }
-
-                }else {
-                    isPlayerTurn = true;
+                    aIAlgorithm(isNew);
+                } else {
                     cell.setTexture(new Texture("CellBlack.jpg"));
+                    return false;
+                }
+                break;
+            }
+        }
+        return true;
+    }
 
-
+    public void checkSwitchDir(){
+        if(!checkIfPresent(currentX + 50 * times, currentY) ||
+                !checkIfPresent(currentX -50 * times, currentY)||
+                !checkIfPresent(currentX , currentY+50*times) ||
+                !checkIfPresent(currentX , currentY - 50*times)){
+            switch (dir){
+                case R:{
+                    dir = Direction.L;
+                    this.times =1;
+                    break;
+                }
+                case L:{
+                    dir = Direction.U;
+                    this.times =1;
+                    break;
+                }
+                case U: {
+                    dir = Direction.D;
+                    this.times =1;
+                    break;
+                }
+                case D: {
+                    dir = Direction.R;
+                    this.times =1;
+                    break;
                 }
             }
         }
-        return isPlayerTurn;
     }
 
+    private void deleteSelectedCell(int touchX, int touchY) {
+        Iterator<List<Integer>> iter = selectCell.iterator();
+        while (iter.hasNext()) {
+            List<Integer> list = iter.next();
+            if (list.get(0) == touchX && list.get(1) == touchY) {
+                iter.remove();
+            }
+        }
+    }
+
+
+    public boolean checkIfPresent(int x, int y) {
+        for (List<Integer> pair : selectCell) {
+            if (pair.get(0) == x && pair.get(1) == y) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 

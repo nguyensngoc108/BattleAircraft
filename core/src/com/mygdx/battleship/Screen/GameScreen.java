@@ -19,6 +19,7 @@ public class GameScreen implements Screen {
     private boolean isPlacingShip = true;
     private boolean shipIsHor = true;
     private boolean isPlayerTurn = true;
+    private boolean isNew = true; //if AI want to randomly select cell
     private int numShip=0;
     private Texture background;
     private BattleShipMain game;
@@ -173,17 +174,25 @@ public class GameScreen implements Screen {
                         for (Cell cell : cells) {
                             if (cell.checkInput(touchX, touchY)) {
                                 removeCells.add(cell);
-                                if(cell.isShip) //if cell that isShip is clicked
+                                if(cell.isShip) { //if cell that isShip is clicked
                                     cell.setTexture(new Texture("redCell.png"));
-                                else
+                                }else {
                                     isPlayerTurn = false;
                                     cell.setTexture(new Texture("CellBlack.jpg"));
+                                }
                             }
                         }
                     }
                 }
             }else{
-                aIplayer.selectCell(isPlayerTurn);
+                if(isNew) {
+                    boolean successfulSelection = aIplayer.selectCell(isPlayerTurn, isNew);
+                    if (successfulSelection) {
+                        isPlayerTurn = true; // switch turn back to the player
+                    }
+                }else{
+                    aIplayer.aIAlgorithm(isNew);
+                }
             }
         }
 
