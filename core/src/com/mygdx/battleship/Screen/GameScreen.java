@@ -207,14 +207,14 @@ public class GameScreen implements Screen {
         for (Cell cell : cells) {
             cell.render(game.batch);
         }
-    //render ships
-//        for(Ship ship : ships){
-//            ship.render(game.batch);
-//        }
+//    render ships
+        for(Ship ship : ships){
+            ship.render(game.batch);
+        }
 
-//        for(Ship ship : aIShips){
-//            ship.render(game.batch);
-//        }
+        for(Ship ship : aIShips){
+            ship.render(game.batch);
+        }
         game.batch.end();
     }
 
