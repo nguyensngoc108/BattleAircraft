@@ -1,4 +1,4 @@
-package com.gdx.battleship;
+package com.mygdx.battleship.Tool;
 
 public enum CellType {
     WATER,

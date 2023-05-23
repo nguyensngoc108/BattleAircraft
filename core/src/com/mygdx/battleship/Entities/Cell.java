@@ -13,6 +13,8 @@ public class Cell implements Entity{
     public int height;
     public int width;
     public boolean isShip = false;
+    public boolean ShipNum[] = {false,false,false,false};
+
     public float x, y;
     public Texture texture;
 
@@ -58,22 +60,31 @@ public class Cell implements Entity{
         return width;
     }
     public boolean checkInput(int xCor, int yCor) {
-
-            // Check if input is within cell bounds
-            if (xCor >= x && xCor <= x + width && yCor >= y && yCor <= y + height)
-                return true;
-            else
-                return false;
-
+        // Check if input is within cell bounds
+        if (xCor >= x && xCor <= x + width && yCor >= y && yCor <= y + height)
+            return true;
+        else
+            return false;
     }
 
+    public boolean isShip(){
+        return isShip;
+    }
     public void setTexture(Texture texture){
         this.texture = texture;
     }
     public Texture getTexture(){
         return this.texture;
     }
-    public void setIsShip(boolean boo){
-        this.isShip = boo;
+
+    public boolean[] getShipNum() {
+        return ShipNum;
+    }
+
+    public void setIsShip(boolean isShip){
+        this.isShip = isShip;
+    }
+    public void setShipNum(int i){
+        ShipNum[i] = true;
     }
 }
