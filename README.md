@@ -8,6 +8,7 @@
 * [About](#About)
 * [Engines](#Engines)
 * [Architecture](#Architecture)
+* [Data Structure and Algorithm](#Data Structure and Algorithm)
 
 ---
 ## About
@@ -51,5 +52,8 @@ The key is how you show your flexibility in this game.
 
 ## ⚙ Architecture
 <p align="center">
-<img src= "https://github.com/nguyensngoc108/SpaceAircraft/blob/final/assets/Diagram.png"/> 
+<img src= ""/> 
 </p>
+
+
+## Data Structure and Algorithm
