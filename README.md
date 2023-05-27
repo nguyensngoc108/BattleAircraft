@@ -8,7 +8,7 @@
 * [About](#About)
 * [Engines](#Engines)
 * [Architecture](#Architecture)
-* [Data Structure and Algorithm](#Data Structure and Algorithm)
+* [Data Structure and Algoprithm](#data-structure-and-algorithm)
 
 ---
 ## About
