@@ -1,6 +1,7 @@
 package com.mygdx.spaceaircraft.screen;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -55,6 +56,14 @@ public class BossScreen implements Screen {
     float stateTime;
 
 
+
+
+
+    private boolean isSpawningAsteroids = false;
+    private List<BigAsteroid> spawnedAsteroids = new ArrayList<>();
+    private float asteroidSpawnTimer = 0;
+    private float asteroidSpawnInterval = 1.5f; // Adjust as needed
+    private float asteroidSpeed = 100; // Adjust as needed
 
     float rolltimer;
     float shootTimer;
@@ -133,7 +142,9 @@ public class BossScreen implements Screen {
 
     @java.lang.Override
     public void render (float delta) {
-
+        // Get the boss's  position
+        float bossX = boss.getX(); // Get the boss's X position
+        float bossY = boss.getY(); // Get the boss's Y position
         //Boss movement
         boss.update(delta);
         //Bullet animation
@@ -148,8 +159,19 @@ public class BossScreen implements Screen {
             if (roll == 2 || roll == 4)
                 offset = 16;
 
-            bullets.add(new Bullet(x+ 45, y + offset));
-            bullets.add(new Bullet(x + AIRCRAFT_WIDTH - 50, y + offset));
+
+            if(boss.getBossHealth() < 0.5f){
+                //Add three bullets
+                bullets.add(new Bullet(x + 45, y + offset));
+                bullets.add(new Bullet(x + AIRCRAFT_WIDTH - 50, y + offset));
+                bullets.add(new Bullet(x + AIRCRAFT_WIDTH/2 - 5, y + offset));
+
+            }
+            else{
+                bullets.add(new Bullet(x+ 45, y + offset));
+                bullets.add(new Bullet(x + AIRCRAFT_WIDTH - 50, y + offset));
+            }
+
         }
 
         //Update
@@ -160,6 +182,7 @@ public class BossScreen implements Screen {
                 bulletsToRemove.add(bullet);
         }
         bullets.removeAll(bulletsToRemove);
+
 
         //Effect update
         ArrayList<Effect> removeEffect = new ArrayList<>();
@@ -172,9 +195,9 @@ public class BossScreen implements Screen {
 
         //asteroid spawn
         asteroidSpawnTime -= delta;
-        if (asteroidSpawnTime <= 0){
-            asteroidSpawnTime = random.nextFloat() * (Max_Asteroid_Spawn_Time - Min_Asteroid_Spawn_Time) + Min_Asteroid_Spawn_Time;
-            asteroids.add(new BigAsteroid(random.nextInt(Gdx.graphics.getWidth() - 16),Gdx.graphics.getHeight(),new Texture("asteroid1.png"),16,16));
+        if (asteroidSpawnTime <= 0) {
+            asteroidSpawnTime = random.nextFloat() * (Max_Asteroid_Spawn_Time - Min_Asteroid_Spawn_Time) + Max_Asteroid_Spawn_Time;
+            asteroids.add(new BigAsteroid(bossX, bossY, new Texture("asteroid1.png"), 16, 16));
         }
 
 
@@ -189,11 +212,9 @@ public class BossScreen implements Screen {
 
         //BigAsteroid spawn
         bigAsteroidSpawnTime -= delta;
-        if (bigAsteroidSpawnTime <= 0){
-            bigAsteroidSpawnTime = random.nextFloat() * (Max_BigAsteroid_Spawn_Time - Min_BigAsteroid_Spawn_Time) + Min_BigAsteroid_Spawn_Time;
-
-            bigAsteroids.add(new BigAsteroid(random.nextInt(Gdx.graphics.getWidth() - 32 /*WIDTH of bigasteroid*/),Gdx.graphics.getHeight(), new Texture("bigAsteroid.png"),32,32));
-
+        if (bigAsteroidSpawnTime <= 0) {
+            bigAsteroidSpawnTime = random.nextFloat() * (Max_BigAsteroid_Spawn_Time - Min_BigAsteroid_Spawn_Time) + Max_BigAsteroid_Spawn_Time;
+            bigAsteroids.add(new BigAsteroid(bossX, bossY, new Texture("bigAsteroid.png"), 32, 32));
         }
         //BigAsteroid update
         ArrayList<BigAsteroid> removeBigAsteroid = new ArrayList<BigAsteroid>();
@@ -203,12 +224,12 @@ public class BossScreen implements Screen {
                 bigAsteroids.removeAll(removeBigAsteroid);
         }
 
-        //sepAsteroid spawn
-        sepAsteroidSpawnTime -= delta;
-        if (sepAsteroidSpawnTime <= 0){
-            sepAsteroidSpawnTime = random.nextFloat() * (Max_SepAsteroid_Spawn_Time - Min_SepAsteroid_Spawn_Time) + Min_SepAsteroid_Spawn_Time;
-            sepAsteroids.add(new BigAsteroid(random.nextInt(Gdx.graphics.getWidth() - 32), Gdx.graphics.getHeight(), new Texture("Asteroid2.png"),32,32));
-        }
+//       // sepAsteroid spawn
+//        sepAsteroidSpawnTime -= delta;
+//        if (sepAsteroidSpawnTime <= 0) {
+//            sepAsteroidSpawnTime = random.nextFloat() * (Max_SepAsteroid_Spawn_Time - Min_SepAsteroid_Spawn_Time) + Min_SepAsteroid_Spawn_Time;
+//            sepAsteroids.add(new BigAsteroid(bossX, bossY, new Texture("Asteroid2.png"), 32, 32));
+//        }
 
         //SepAsteroid updates
         ArrayList<BigAsteroid> removeSepAsteroid = new ArrayList<BigAsteroid>();
@@ -350,6 +371,7 @@ public class BossScreen implements Screen {
                     removeSepAsteroid.add(sepAsteroid);
                     effects.add(new Effect(sepAsteroid.getX(),sepAsteroid.getY()));
 
+
                     //Spawn small asteroid
                     smallAsteroids.add(new BigAsteroid(sepAsteroid.getX() + 10, sepAsteroid.getY() - 10,new Texture("SmallAsteroid.png"),16,16));
                     smallAsteroids.add(new BigAsteroid(sepAsteroid.getX() - 10, sepAsteroid.getY(),new Texture("SmallAsteroid.png"),16,16));
@@ -373,10 +395,11 @@ public class BossScreen implements Screen {
         bullets.removeAll(bulletsToRemove);
 
         //bullets hit boss
+
         for (Bullet bullet: bullets){
             if(bullet.getReact().collidesWith(boss.getReact())){
                 bulletsToRemove.add(bullet);
-                boss.decreaseBossHealth(0.04);
+                boss.decreaseBossHealth(0.05f);
                 effects.add(new Effect(boss.getX(),boss.getY()));
 
                 //Game Complete
@@ -385,8 +408,21 @@ public class BossScreen implements Screen {
                     game.setScreen(new Congratulation(game));
                     return;
                 }
+                if(boss.getBossHealth() < 0.5f) {
+
+                    boss.setBossTexture(new Texture("bossNgoc1.png"), new Texture("bossNgoc2.png"));
+                    //Create a loop that will spawn a line of bigAsteroid
+
+                        for (int i = 0; i < Gdx.graphics.getWidth(); i += 70) {
+                            sepAsteroids.add(new BigAsteroid(i, Gdx.graphics.getHeight() - boss.HEIGHT, new Texture("Asteroid2.png"), 32, 32));
+                    }
+                }
+
             }
+
         }
+
+
         bullets.removeAll(bulletsToRemove);
 
         //asteroid hit player
@@ -457,8 +493,19 @@ public class BossScreen implements Screen {
             }
         }
         smallAsteroids.removeAll(removeSmallAsteroid);
+        //remove bigAsteroid and asteroid that are collapsed
+        for(BigAsteroid bigAsteroid : bigAsteroids){
+            for(BigAsteroid asteroid : asteroids){
+                if( bigAsteroid.getReact().collidesWith(asteroid.getReact())){
+                    removeAsteroid.add(asteroid);
+                    removeBigAsteroid.add(bigAsteroid);
+                }
+            }
+        }
+        bigAsteroids.removeAll(removeBigAsteroid);
+        sepAsteroids.removeAll(removeSepAsteroid);
 
-        // remove bigAsteroid and sepAsteroid that are near
+        // remove bigAsteroid and sepAsteroid that are collapsed
         for(BigAsteroid bigAsteroid : bigAsteroids){
             for(BigAsteroid sepAsteroid : sepAsteroids){
                 if( bigAsteroid.getReact().collidesWith(sepAsteroid.getReact())){
@@ -526,6 +573,13 @@ public class BossScreen implements Screen {
             effect.render(game.batch);
         }
 
+        if(boss.getBossHealth() > 0.6f)
+            game.batch.setColor(Color.GREEN);
+        else if (boss.getBossHealth() > 0.2f)
+            game.batch.setColor(Color.ORANGE);
+        else
+            game.batch.setColor(Color.RED);
+        game.batch.draw(blank, 0 ,Gdx.graphics.getHeight() - 5 , Gdx.graphics.getWidth() * (float) boss.getBossHealth() ,5);
         if(health > 0.6f)
             game.batch.setColor(Color.GREEN);
         else if (health > 0.2f)
@@ -533,7 +587,7 @@ public class BossScreen implements Screen {
         else
             game.batch.setColor(Color.RED);
         game.batch.draw(blank, 0 ,0 , Gdx.graphics.getWidth() * health,5);
-        game.batch.draw(blank, 0 ,Gdx.graphics.getHeight() - 5 , Gdx.graphics.getWidth() * (float) boss.getBossHealth() ,5);
+
         game.batch.setColor(Color.WHITE);
         game.batch.draw((TextureRegion) rolls[roll].getKeyFrame(stateTime,true), x,y , (float) AIRCRAFT_WIDTH, (float) AIRCRAFT_HEIGHT);
         game.batch.end();
@@ -544,6 +598,47 @@ public class BossScreen implements Screen {
     public void resize (int width, int height) {
 
     }
+
+    public void update(float deltaTime) {
+        // Existing code...
+
+        if (isSpawningAsteroids) {
+            asteroidSpawnTimer += deltaTime;
+            if (asteroidSpawnTimer >= asteroidSpawnInterval) {
+                spawnLineOfAsteroids();
+                asteroidSpawnTimer = 0;
+            }
+        }
+
+        // Existing code...
+    }
+    private void spawnLineOfAsteroids() {
+        for (int i = 0; i < Gdx.graphics.getWidth(); i += 70) {
+            spawnedAsteroids.add(new BigAsteroid(i, Gdx.graphics.getHeight() - boss.HEIGHT, new Texture("Asteroid2.png"), 32, 32));;
+        }
+    }
+
+    private void spawnLineOfAsteroids(float xBoss, float yBoss) {
+        for (int i = 0; i < Gdx.graphics.getWidth(); i += 70) {
+            float x = i;
+            float y = Gdx.graphics.getHeight() - boss.HEIGHT;
+             xBoss = 0.1f; // Adjust as needed
+             yBoss = -asteroidSpeed; // Adjust as needed
+            spawnedAsteroids.add(new BigAsteroid(i, Gdx.graphics.getHeight() - boss.HEIGHT, new Texture("Asteroid2.png"), 32, 32));;
+        }
+    }
+
+    private void startSpawningAsteroids() {
+        isSpawningAsteroids = true;
+        asteroidSpawnTimer = 0;
+    }
+
+    private void stopSpawningAsteroids() {
+        isSpawningAsteroids = false;
+        asteroidSpawnTimer = 0;
+        spawnedAsteroids.clear();
+    }
+
 
     @java.lang.Override
     public void pause () {

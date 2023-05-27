@@ -75,30 +75,24 @@ public class LevelComplete implements Screen {
         int x = (SpaceAircraftMain.WIDTH / 2 - button_Width / 2);
 
         //NextGround button
-        if (Gdx.input.getX() < x + button_Width && Gdx.input.getX() > x && SpaceAircraftMain.HEIGHT - Gdx.input.getY() < NextGround_Y + button_Height && SpaceAircraftMain.HEIGHT - Gdx.input.getY() > NextGround_Y){
-            game.batch.draw(Next_Ground2, SpaceAircraftMain.WIDTH/2 - button_Width/2, NextGround_Y, button_Width, button_Height);
-            if (Gdx.input.isTouched()) {
-                if(this.level == 1){
-                    game.setScreen(new Level2(game));
-                }else if (this.level == 2) {
-                    game.setScreen(new BossScreen(game));
-                }
-            }
-        } else {
-            game.batch.draw(Next_Ground1, SpaceAircraftMain.WIDTH/2- button_Width/2, NextGround_Y, button_Width, button_Height);
-        }
+//        if (Gdx.input.getX() < x + button_Width && Gdx.input.getX() > x && SpaceAircraftMain.HEIGHT - Gdx.input.getY() < NextGround_Y + button_Height && SpaceAircraftMain.HEIGHT - Gdx.input.getY() > NextGround_Y){
+//            game.batch.draw(Next_Ground2, SpaceAircraftMain.WIDTH/2 - button_Width/2, NextGround_Y, button_Width, button_Height);
+//            if (Gdx.input.isTouched()) {
+//                if(this.level == 1){
+//                    game.setScreen(new Level2(game));
+//                }else if (this.level == 2) {
+//                    game.setScreen(new BossScreen(game));
+//                }
+//            }
+//        } else {
+//            game.batch.draw(Next_Ground1, SpaceAircraftMain.WIDTH/2- button_Width/2, NextGround_Y, button_Width, button_Height);
+//        }
 
         //PlayAgain button
         if (Gdx.input.getX() < x + button_Width && Gdx.input.getX() > x && SpaceAircraftMain.HEIGHT - Gdx.input.getY() < PlayAgain_Y + button_Height && SpaceAircraftMain.HEIGHT - Gdx.input.getY() > PlayAgain_Y){
             game.batch.draw(PlayAgain2, SpaceAircraftMain.WIDTH/2 - button_Width/2, PlayAgain_Y, button_Width, button_Height);
             if (Gdx.input.isTouched()) {
-                if(this.level == 1){
-                    game.setScreen(new Level1(game));
-                }else if (this.level == 2) {
-                    game.setScreen(new Level2(game));
-                }else if (this.level == 3) {
-                    game.setScreen(new BossScreen(game));
-                }
+                game.setScreen(new BossScreen(game));
 
             }
         } else {

@@ -80,7 +80,7 @@ public class GameOver implements Screen {
         if (Gdx.input.getX() < x + button_Width && Gdx.input.getX() > x && SpaceAircraftMain.HEIGHT - Gdx.input.getY() < playAgain_Y + button_Height && SpaceAircraftMain.HEIGHT - Gdx.input.getY() > playAgain_Y){
             game.batch.draw(playAgain2, SpaceAircraftMain.WIDTH/2 - button_Width/2, playAgain_Y, button_Width, button_Height);
             if (Gdx.input.isTouched()) {
-                    game.setScreen(new MainScreen(game));
+                    game.setScreen(new BossScreen(game));
                 }
         } else {
             game.batch.draw(playAgain1, SpaceAircraftMain.WIDTH/2- button_Width/2, playAgain_Y, button_Width, button_Height);

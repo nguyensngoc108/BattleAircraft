@@ -81,7 +81,7 @@ public class MenuScreen implements Screen {
         if(Gdx.input.getX() < x + Adventure_Button_Width && Gdx.input.getX() > x && SpaceAircraftMain.HEIGHT - Gdx.input.getY() < Adventure_Button_Y + Adventure_Button_Height && SpaceAircraftMain.HEIGHT - Gdx.input.getY() > Adventure_Button_Y ){
             game.batch.draw(Adventure2, x, Adventure_Button_Y, Adventure_Button_Width, Adventure_Button_Height);
             if(Gdx.input.isTouched()){
-                game.setScreen(new Level1(game));
+                game.setScreen(new BossScreen(game));
             }
         }else {
             game.batch.draw(Adventure1, x, Adventure_Button_Y, Adventure_Button_Width, Adventure_Button_Height);
