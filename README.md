@@ -64,8 +64,8 @@ The key is how you show your flexibility in this game.
    - ___Boss’s movement:___
 	Boss will move base on a particular directions, and that directions will change whenever the boss hit the edge of the screen.
    - ___Bullet Shooting Algorithm:___
-   	- Bullets are created and added to the bullets ArrayList when the condition is satisfied (the spacebar is pressed  and the shootTimer exceeds the SHOOT_TIME).
-   	- The bullets are given initial positions based on the player's position (x and y) and position will be updated over time.
+   	+ Bullets are created and added to the bullets ArrayList when the condition is satisfied (the spacebar is pressed  and the shootTimer exceeds the SHOOT_TIME).
+   	+ The bullets are given initial positions based on the player's position (x and y) and position will be updated over time.
    - ___Asteroid’s spawn:___
       - _Type 1:_ 
       Small: boss’s coordinate, delta time.
