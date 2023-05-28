@@ -56,3 +56,23 @@ The key is how you show your flexibility in this game.
 </p>
 
 ## Data Structure and Algorithm
+- __Data Structure:__
+   - Arraylist for store objects: asteroid, effect, bullet
+   - Array for storing animation objects of Player	
+
+- __Algorithm:__
+   - _Boss’s movement_
+	Boss will move base on a particular directions, and that directions will change whenever the boss hit the edge of the screen
+   - _Bullet Shooting Algorithm:_
+   Bullets are created and added to the bullets ArrayList when the condition is satisfied (the spacebar is pressed  and the shootTimer exceeds the SHOOT_TIME.)
+   The bullets are given initial positions based on the player's position (x and y) and position will be updated over time
+   - _Asteroid’s spawn_
+      - Type 1: 
+      Small: boss’s coordinate, delta time
+      Big: boss’s coordinate, delta time
+      - Type 2: boss’s health < 50%
+	- _Collision Detection Algorithm_
+		Collision detection between bullets and asteroids is performed using nested loops that iterate through the bullets and asteroids ArrayLists.
+The collision is detected using the collidesWith() method of the bullet and asteroid's respective React objects.
+When a collision occurs, the bullet and asteroid are removed, and an effect is added to the effects ArrayList.
+
