@@ -63,14 +63,14 @@ The key is how you show your flexibility in this game.
 - __Algorithm:__
    - ___Boss’s movement:___
 	Boss will move base on a particular directions, and that directions will change whenever the boss hit the edge of the screen
-   - ____Bullet Shooting Algorithm:___
+   - ___Bullet Shooting Algorithm:___
    Bullets are created and added to the bullets ArrayList when the condition is satisfied (the spacebar is pressed  and the shootTimer exceeds the SHOOT_TIME.)
    The bullets are given initial positions based on the player's position (x and y) and position will be updated over time
    - ___Asteroid’s spawn:___
-      - Type 1: 
+      - _Type 1:_ 
       Small: boss’s coordinate, delta time
       Big: boss’s coordinate, delta time
-      - Type 2: boss’s health < 50%
+      - _Type 2:_ boss’s health < 50%
 	- ___Collision Detection Algorithm:___
 		Collision detection between bullets and asteroids is performed using nested loops that iterate through the bullets and asteroids ArrayLists.
 The collision is detected using the collidesWith() method of the bullet and asteroid's respective React objects.
