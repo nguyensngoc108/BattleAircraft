@@ -70,7 +70,7 @@
         - _Type 1:_
           Small: boss’s coordinate, delta time.
           Big: boss’s coordinate, delta time.
-        - _Type 2:_ boss’s health < 50%.
+        - _Type 2:_ Boss’s health < 50%.
     - ___Collision Detection Algorithm:___
         - Collision detection between bullets and asteroids is performed using nested loops that iterate through the bullets and asteroids ArrayLists.
         - The collision is detected using the collidesWith() method of the bullet and asteroid's respective React objects.
